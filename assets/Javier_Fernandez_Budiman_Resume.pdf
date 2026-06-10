@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javier Fernandez-Budiman | Data Science Portfolio & Dashboard</title>
+    <meta name="description" content="Interactive, Power BI-inspired portfolio dashboard showcasing data science, machine learning, and causal inference projects by Javier Fernandez-Budiman.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <!-- App Container Shell -->
+    <div id="app-container">
+        
+        <!-- Collapsible Sidebar Drawer (Screenshot-Matched) -->
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <!-- Profile Avatar Card -->
+                <div class="profile-avatar-container">
+                    <div class="profile-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                    <span class="status-dot active" title="Status: Online & Ready"></span>
+                </div>
+                <div class="profile-info nav-text">
+                    <h2 class="profile-name">Javier Fernandez-Budiman</h2>
+                    <p class="profile-card-role">Machine Learning & Data Science</p>
+                </div>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="sidebar-actions">
+                <button id="sidebar-contact-btn" class="quick-btn contact-btn"><i class="fa-solid fa-paper-plane"></i> Contact</button>
+                <a href="#" id="sidebar-resume-btn" class="quick-btn resume-btn" download="Javier_Fernandez_Budiman_Resume.pdf"><i class="fa-solid fa-file-pdf"></i> Resume</a>
+            </div>
+
+            <!-- Vertical Navigation Menu -->
+            <nav class="sidebar-nav" aria-label="Main Navigation">
+                <button class="nav-tab active" data-tab="tab-overview" id="nav-btn-overview">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="nav-text">Home</span>
+                </button>
+                <button class="nav-tab" data-tab="tab-deepdives" id="nav-btn-deepdives">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span class="nav-text">Projects</span>
+                </button>
+                <button class="nav-tab" data-tab="tab-journey" id="nav-btn-journey">
+                    <i class="fa-solid fa-route"></i>
+                    <span class="nav-text">Experience</span>
+                </button>
+                <button class="nav-tab" data-tab="tab-contact" id="nav-btn-contact">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span class="nav-text">SQL Console</span>
+                </button>
+            </nav>
+
+            <!-- Collapse Toggle Button -->
+            <div class="sidebar-toggle-container">
+                <button id="sidebar-collapse-btn" class="sidebar-collapse-btn">
+                    <i class="fa-solid fa-chevron-left"></i>
+                    <span class="nav-text">Collapse</span>
+                </button>
+            </div>
+
+            <!-- Keyboard Shortcut Box -->
+            <div class="shortcut-box nav-text">
+                <span class="shortcut-label">SHORTCUT</span>
+                <span class="shortcut-combo"><kbd>Ctrl</kbd> + <kbd>\</kbd></span>
+                <p class="shortcut-desc">Toggle the sidebar layout from the keyboard.</p>
+            </div>
+
+            <!-- Connect Status & Social Footer -->
+            <div class="sidebar-footer">
+                <div class="connect-status nav-text">
+                    <span class="connect-label">CONNECT</span>
+                    <div class="status-row">
+                        <span class="status-indicator-dot active"></span>
+                        <span class="status-text">Ready</span>
+                        <div class="player-controls">
+                            <button class="player-btn" title="Mute/Unmute"><i class="fa-solid fa-volume-high"></i></button>
+                            <button class="player-btn" title="Audio Status"><i class="fa-solid fa-play"></i></button>
+                        </div>
+                    </div>
+                    <span class="active-status-desc">Active Node</span>
+                </div>
+
+                <!-- Outline Social Circles -->
+                <div class="social-links-row">
+                    <a href="https://github.com/jfbaa" target="_blank" class="social-circle-btn" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://linkedin.com" target="_blank" class="social-circle-btn" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com" target="_blank" class="social-circle-btn" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+
+                <div class="copyright-box">
+                    <button id="info-btn" class="copyright-btn">© 2026 Javier Fernandez-Budiman</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Side Main Content Panel -->
+        <div id="content-container">
+            <!-- Header Controls -->
+            <header id="main-header">
+                <div class="header-title-container">
+                    <button id="menu-toggle-btn" class="menu-toggle-btn" title="Toggle Sidebar"><i class="fa-solid fa-bars"></i></button>
+                    <h1 id="dashboard-title">Data Science Portfolio Console</h1>
+                </div>
+                
+                <div class="header-controls">
+                    <button id="reset-filters-btn" class="header-btn action-btn disabled" title="Reset All Filters">
+                        <i class="fa-solid fa-rotate-left"></i> Reset All Filters
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic Filter Banner (Visible when filtered) -->
+            <div id="filter-banner" class="hidden">
+                <div class="filter-banner-content">
+                    <span class="filter-icon"><i class="fa-solid fa-filter"></i></span>
+                    <span id="active-filter-text">Showing filtered workspace...</span>
+                </div>
+                <button id="clear-filter-banner-btn" class="clear-banner-btn">&times;</button>
+            </div>
+
+            <!-- Content Panel Router -->
+            <main id="main-content">
+                
+                <!-- TAB 1: OVERVIEW/HOME DASHBOARD -->
+                <section id="tab-overview" class="tab-pane active" aria-labelledby="nav-btn-overview">
+                    
+                    <!-- Spacious Biographical Hero -->
+                    <div class="overview-hero">
+                        <h2 class="overview-headline">Javier Fernandez-Budiman</h2>
+                        <p class="overview-subheadline">I build statistical models, deep metric learning applications, and data pipelines to solve complex causal and structural problems.</p>
+                    </div>
+
+                    <!-- Layout Grid: Skills Ledger & Slicer Table -->
+                    <div class="dashboard-grid">
+                        
+                        <!-- Left Side: Interactive Skills Ledger -->
+                        <div class="grid-left-spacious">
+                            <div class="skills-ledger-card">
+                                <h3 class="ledger-title"><i class="fa-solid fa-laptop-code"></i> Technical Skills Ledger & Provenance</h3>
+                                <p class="ledger-intro">Below is an index of my core proficiencies, mapped to the specific project workloads in this portfolio where I implemented them:</p>
+                                
+                                <div class="ledger-list">
+                                    <div class="ledger-item">
+                                        <div class="ledger-skill-header">
+                                            <span class="skill-badge python">Python</span>
+                                            <span class="skill-provenance">Used in: 
+                                                <a href="#" class="skill-jump-link" data-project="starlight">Project Starlight</a>, 
+                                                <a href="#" class="skill-jump-link" data-project="jaguar">Jaguar Re-ID</a>, 
+                                                <a href="#" class="skill-jump-link" data-project="scraper">Catalog Scraper</a>
+                                            </span>
+                                        </div>
+                                        <p class="ledger-skill-desc">The core programming foundation for my research. Used to orchestrate end-to-end pipelines, write custom PyTorch training modules, calibrate boosting parameters, and automate multi-threaded web tasks.</p>
+                                    </div>
+
+                                    <div class="ledger-item">
+                                        <div class="ledger-skill-header">
+                                            <span class="skill-badge metric">Vector Embeddings & Metric Learning</span>
+                                            <span class="skill-provenance">Used in: 
+                                                <a href="#" class="skill-jump-link" data-project="jaguar">Jaguar Re-ID</a>
+                                            </span>
+                                        </div>
+                                        <p class="ledger-skill-desc">Implemented deep metric learning networks for image re-identification. Customized batch-hard triplet loss functions to generate 128-dimensional animal embeddings robust to camera trap illumination variances.</p>
+                                    </div>
+
+                                    <div class="ledger-item">
+                                        <div class="ledger-skill-header">
+                                            <span class="skill-badge causal">Causal Inference</span>
+                                            <span class="skill-provenance">Used in: 
+                                                <a href="#" class="skill-jump-link" data-project="starlight">Project Starlight</a>
+                                            </span>
+                                        </div>
+                                        <p class="ledger-skill-desc">Formulated staggered Doubly-Robust Difference-in-Differences (DR-DiD) estimators. Calibrated selection-bias propensity weights using LightGBM classifier probabilities to measure true causal economic shifts.</p>
+                                    </div>
+
+                                    <div class="ledger-item">
+                                        <div class="ledger-skill-header">
+                                            <span class="skill-badge cv">Semantic Segmentation</span>
+                                            <span class="skill-provenance">Used in: 
+                                                <a href="#" class="skill-jump-link" data-project="unet">U-Net Shape Reconstruction</a>
+                                            </span>
+                                        </div>
+                                        <p class="ledger-skill-desc">Structured a custom PyTorch convolutional encoder-decoder network (U-Net with skip connections). Optimized combination Dice and BCE loss bounds to reconstruct high-accuracy pixel-level vector masks.</p>
+                                    </div>
+
+                                    <div class="ledger-item">
+                                        <div class="ledger-skill-header">
+                                            <span class="skill-badge sql">SQL & Database Pipelines</span>
+                                            <span class="skill-provenance">Used in: 
+                                                <a href="#" class="skill-jump-link" data-project="scraper">Catalog Scraper</a>, 
+                                                <a href="#" class="skill-jump-link" data-project="tab-contact">SQL Console</a>
+                                            </span>
+                                        </div>
+                                        <p class="ledger-skill-desc">Engineered relational database schemas, multi-table foreign keys, and SQLite ingestion transaction wrappers. Structured rate-limited data pipelines and index layouts for fragmented university course catalogs.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Clean Project Slicer Table -->
+                        <div class="grid-right-spacious">
+                            <div class="table-card table-hero-card">
+                                <h2 class="chart-title">Total Project Registry & Deliverables <span class="subtitle-detail">Click a row to cross-filter dashboard metrics</span></h2>
+                                <div class="table-container">
+                                    <table id="project-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Project Code / Name</th>
+                                                <th>Focus Area</th>
+                                                <th>Key Model Architecture</th>
+                                                <th>Metrics / Outcome</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="project-table-body">
+                                            <!-- Will be dynamically populated by app.js -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="dashboard-sub-row">
+                                <!-- Chart Card: Top Technologies -->
+                                <div class="chart-card">
+                                    <h2 class="chart-title">Primary Tooling by Project Hours <span class="tooltip-icon" title="Estimated coding hours logged in recent projects"><i class="fa-solid fa-circle-question"></i></span></h2>
+                                    <div class="chart-container" id="tech-chart"></div>
+                                </div>
+                                
+                                <!-- Chart Card: Skill Competency -->
+                                <div class="chart-card">
+                                    <h2 class="chart-title">Core Technical Competence Profile <span class="tooltip-icon" title="Competence indices graded on project implementation depth"><i class="fa-solid fa-circle-question"></i></span></h2>
+                                    <div class="chart-container" id="skills-chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- TAB 2: PROJECT DEEP DIVES -->
+                <section id="tab-deepdives" class="tab-pane" aria-labelledby="nav-btn-deepdives">
+                    <div class="deep-dives-layout">
+                        <!-- Project Selector Sidebar -->
+                        <aside class="project-selector-aside">
+                            <h3>Project Repository</h3>
+                            <ul class="project-list-menu" id="deepdive-menu">
+                                <li class="active" data-project="starlight">
+                                    <div class="proj-menu-title">Project Starlight</div>
+                                    <div class="proj-menu-subtitle">Causal Inference & Gentrification</div>
+                                </li>
+                                <li data-project="jaguar">
+                                    <div class="proj-menu-title">Jaguar Re-Identification</div>
+                                    <div class="proj-menu-subtitle">Deep Learning / Computer Vision</div>
+                                </li>
+                                <li data-project="unet">
+                                    <div class="proj-menu-title">U-Net Shape Reconstruction</div>
+                                    <div class="proj-menu-subtitle">Computer Vision / PyTorch</div>
+                                </li>
+                                <li data-project="scraper">
+                                    <div class="proj-menu-title">Academic Catalog Scraper</div>
+                                    <div class="proj-menu-subtitle">Data Engineering / Scraping</div>
+                                </li>
+                            </ul>
+                        </aside>
+
+                        <!-- Details Display Panel -->
+                        <article class="project-details-panel" id="project-details-content">
+                            <!-- Project content dynamic injection by JS (based on selected item) -->
+                            <div id="deepdive-placeholder">
+                                Loading project repository...
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- TAB 3: PROFESSIONAL JOURNEY -->
+                <section id="tab-journey" class="tab-pane" aria-labelledby="nav-btn-journey">
+                    <div class="journey-container">
+                        <div class="journey-header">
+                            <h2>Javier's Career & Development Timeline</h2>
+                            <p class="journey-subtitle">Mapping the transition from academic foundations to machine learning engineering.</p>
+                        </div>
+                        
+                        <div class="timeline">
+                            <!-- Timeline Item 1 -->
+                            <div class="timeline-item right">
+                                <div class="timeline-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                                <div class="timeline-content">
+                                    <span class="timeline-date">Current Workspace (2026)</span>
+                                    <h3>Data Science Research & Thesis Work</h3>
+                                    <h4>Lead Developer - Project Starlight</h4>
+                                    <p>Decomposing Starbucks location decisions and appreciation premiums in Atlanta using doubly-robust differences-in-differences. Designing localized demographic panels and spatial estimators.</p>
+                                    <div class="tag-row">
+                                        <span class="timeline-tag">Causal Inference</span>
+                                        <span class="timeline-tag">LightGBM</span>
+                                        <span class="timeline-tag">Spatial Data</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 2 -->
+                            <div class="timeline-item left">
+                                <div class="timeline-icon"><i class="fa-solid fa-trophy"></i></div>
+                                <div class="timeline-content">
+                                    <span class="timeline-date">Late 2025</span>
+                                    <h3>Jaguar Re-Identification Pipeline</h3>
+                                    <h4>Deep Learning Lead</h4>
+                                    <p>Engineered a ResNet-backed triplet loss matching network to identify unique jaguars across cameras. Deployed custom preprocessing (Albumentations) to address lighting shifts. Achieved a top-tier score on Kaggle.</p>
+                                    <div class="tag-row">
+                                        <span class="timeline-tag">PyTorch</span>
+                                        <span class="timeline-tag">Metric Learning</span>
+                                        <span class="timeline-tag">Colab Workflow</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 3 -->
+                            <div class="timeline-item right">
+                                <div class="timeline-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                                <div class="timeline-content">
+                                    <span class="timeline-date">2024 - 2025</span>
+                                    <h3>Academic Foundation (Computer Science & DS)</h3>
+                                    <h4>Advanced Coursework & Computer Vision</h4>
+                                    <p>Deepened expertise in neural architectures, computer vision, and structured data queries. Built the U-Net silhouette filling network and university crawler to integrate fragmented department directories.</p>
+                                    <div class="tag-row">
+                                        <span class="timeline-tag">U-Net</span>
+                                        <span class="timeline-tag">Data Harvesting</span>
+                                        <span class="timeline-tag">SQLite</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 4 -->
+                            <div class="timeline-item left">
+                                <div class="timeline-icon"><i class="fa-solid fa-database"></i></div>
+                                <div class="timeline-content">
+                                    <span class="timeline-date">2023</span>
+                                    <h3>Database Systems & Analysis Projects</h3>
+                                    <h4>Data & Queries Analyst</h4>
+                                    <p>Built MS Access database schema structures and robust query sets (`Fernandez-Budiman-Queries.accdb`) to parse inventory and logistics. Created custom dashboards and formulas to identify structural bottlenecks.</p>
+                                    <div class="tag-row">
+                                        <span class="timeline-tag">SQL</span>
+                                        <span class="timeline-tag">Access DB</span>
+                                        <span class="timeline-tag">Excel Analytics</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: SQL QUERY BUILDER (CONTACT FORM) -->
+                <section id="tab-contact" class="tab-pane" aria-labelledby="nav-btn-contact">
+                    <div class="query-builder-container-spacious">
+                        <div class="query-header">
+                            <h2>Query Builder Console Workspace</h2>
+                            <p class="query-subtitle">Execute a database insertion transaction to log a connection request with Javier Fernandez-Budiman.</p>
+                        </div>
+
+                        <div class="sql-console-card-wide">
+                            <form id="sql-query-form" class="console-body-wide">
+                                <!-- SQL Code Line Inputs -->
+                                <div class="sql-line">
+                                    <span class="line-num">1</span>
+                                    <span class="sql-keyword">SELECT</span> <span class="sql-identifier">full_name</span>, <span class="sql-identifier">organization</span>, <span class="sql-identifier">message_body</span>
+                                    <span class="sql-comment">/* Output contact fields */</span>
+                                </div>
+                                <div class="sql-line">
+                                    <span class="line-num">2</span>
+                                    <span class="sql-keyword">FROM</span> <span class="sql-table">connections_pool.incoming_leads</span>
+                                    <span class="sql-comment">/* Target database table */</span>
+                                </div>
+                                <div class="sql-line">
+                                    <span class="line-num">3</span>
+                                    <span class="sql-keyword">WHERE</span> <span class="sql-identifier">connection_objective</span> = 
+                                    <span class="sql-input-wrapper">
+                                        <select id="connection_objective" name="objective" required>
+                                            <option value="" disabled selected>-- Select Objective --</option>
+                                            <option value="Hiring / Recruitment">"Hiring / Recruitment"</option>
+                                            <option value="Research Collaboration">"Research Collaboration"</option>
+                                            <option value="General Consultation">"General Inquiry / Feedback"</option>
+                                            <option value="Coffee / Virtual Chat">"Coffee / Virtual Chat"</option>
+                                        </select>
+                                    </span>
+                                    <span class="sql-comment">/* Select your purpose */</span>
+                                </div>
+                                <div class="sql-line">
+                                    <span class="line-num">4</span>
+                                    <span class="sql-keyword">AND</span> <span class="sql-identifier">sender_email</span> = 
+                                    <span class="sql-input-wrapper">
+                                        <input type="email" id="sender_email" placeholder="'your.email@address.com'" required>
+                                    </span>
+                                    <span class="sql-comment">/* Your email address */</span>
+                                </div>
+                                <div class="sql-line">
+                                    <span class="line-num">5</span>
+                                    <span class="sql-keyword">AND</span> <span class="sql-identifier">sender_name</span> = 
+                                    <span class="sql-input-wrapper">
+                                        <input type="text" id="sender_name" placeholder="'Your Name / Company'" required>
+                                    </span>
+                                    <span class="sql-comment">/* Your name or organization */</span>
+                                </div>
+                                <div class="sql-line text-area-line-wide">
+                                    <span class="line-num">6</span>
+                                    <span class="sql-keyword">AND</span> <span class="sql-identifier">message_content</span> <span class="sql-operator">LIKE</span> 
+                                    <div class="sql-input-wrapper textarea-wrapper-wide">
+                                        <textarea id="message_content" rows="6" placeholder="'Enter your message/inquiry details here...'" required></textarea>
+                                    </div>
+                                    <span class="sql-comment">/* Enter details here */</span>
+                                </div>
+                                <div class="sql-line">
+                                    <span class="line-num">7</span>
+                                    <span class="sql-keyword">LIMIT</span> 1;
+                                </div>
+                                
+                                <!-- Console Actions -->
+                                <div class="console-actions-wide">
+                                    <button type="submit" id="run-query-btn" class="run-btn">
+                                        <i class="fa-solid fa-play"></i> Execute Query (Send Message)
+                                    </button>
+                                    <button type="reset" class="reset-btn">
+                                        <i class="fa-solid fa-trash-can"></i> Clear Query
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- SQL Output Panel (styled like query results) -->
+                        <div id="query-output-panel" class="query-output-hidden">
+                            <h3><i class="fa-solid fa-table-list"></i> Query Execution Log</h3>
+                            <div id="query-log-terminal">
+                                <!-- Dynamic log text goes here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+            
+            <!-- Footer -->
+            <footer id="main-footer">
+                <span class="footer-meta"><i class="fa-solid fa-code-branch"></i> Git Hub: <a href="https://github.com/jfbaa" target="_blank">github.com/jfbaa</a></span>
+                <span class="footer-meta"><i class="fa-solid fa-chart-pie"></i> Visual Dashboard console modeling v2026.5</span>
+                <span class="footer-meta"><i class="fa-solid fa-clock"></i> Last Refreshed: <span id="refresh-timestamp">2026-05-20</span></span>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Info Modal Box -->
+    <div id="info-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>About This Portfolio Dashboard</h2>
+                <button id="close-modal-btn" class="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Welcome to Javier's Data Science Dashboard. This web application replicates the visual and operational behavior of a <strong>Power BI report</strong> built on a custom dark mode dataset. </p>
+                
+                <h3>Key Architecture & Features:</h3>
+                <ul>
+                    <li><strong>Interactive Cross-Filtering:</strong> Click on a project in the <em>Project Registry</em> table or one of the sidebar selectors to filter the entire dashboard. The KPI Cards and charts update dynamically in real time.</li>
+                    <li><strong>Real-time State Sync:</strong> A central JavaScript state engine coordinates the metrics and dynamically replots tool and skill charts.</li>
+                    <li><strong>Spatial Mapping:</strong> The <em>Project Starlight</em> deep dive contains an interactive Leaflet map of Atlanta plotting historical BeltLine trail segment openings, active Starbucks stores, and calculated causal appreciation metrics.</li>
+                    <li><strong>SQL Query Builder:</strong> An interactive SQL editor that accepts connection details as fields in a SELECT block, complete with comments explaining database syntax.</li>
+                </ul>
+                
+                <p class="modal-note"><i class="fa-solid fa-lightbulb"></i> <strong>Tip:</strong> You can click the <strong>"Reset All Filters"</strong> button in the top-right corner of the dashboard at any time to clear selections and return to aggregate workspace stats.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-ok-btn" class="primary-btn">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS and ApexCharts CDN -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <!-- Application Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
