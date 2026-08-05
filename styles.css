@@ -458,6 +458,16 @@ a {
     color: var(--ink-faint);
     margin-bottom: 0 !important;
 }
+.extra-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+    margin-top: 1.5rem;
+}
+.extra-links .source-link {
+    margin-top: 0;
+}
 .source-link {
     display: inline-flex;
     align-items: center;
@@ -497,6 +507,10 @@ a {
     overflow: hidden;
     background: #fafafa;
     cursor: zoom-in;
+}
+.case-figure-item--plate {
+    background: #fff;
+    padding: 0.85rem;
 }
 .case-figure-item img {
     display: block;

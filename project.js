@@ -7,11 +7,15 @@
 (function () {
     "use strict";
 
-    const SECTIONS = [
-        { key: "approach", heading: "Technical Approach & Design Choices" },
-        { key: "context", heading: "Context & the Why" },
-        { key: "reflections", heading: "Personal Reflections & Engineering Gaps" },
-    ];
+    const SECTION_HEADINGS = {
+        approach: "Technical Approach & Design Choices",
+        context: "Context & the Why",
+        validation: "How We Validated It",
+        reflections: "Personal Reflections & Engineering Gaps",
+    };
+
+    /** Running order used unless a project sets its own caseStudy.order. */
+    const DEFAULT_ORDER = ["approach", "context", "reflections"];
 
     function createElement(tag, className, text) {
         const node = document.createElement(tag);
@@ -60,6 +64,8 @@
             const cell = createElement("div", "case-figure-cell");
 
             const button = createElement("button", "case-figure-item");
+            // Charts ship with a light background of their own; give them a white plate.
+            if (block.plate) button.classList.add("case-figure-item--plate");
             button.type = "button";
             button.setAttribute("aria-label", picture.label ? "Expand: " + picture.label : "Expand image");
 
@@ -112,7 +118,11 @@
 
     function renderMeta(project) {
         const meta = document.getElementById("cs-meta");
-        (project.facts || []).forEach((fact) => {
+        if (!project.facts || !project.facts.length) {
+            meta.remove(); // otherwise the empty <dl> leaves a stray rule under the lead
+            return;
+        }
+        project.facts.forEach((fact) => {
             const group = document.createElement("div");
             group.append(
                 createElement("dt", null, fact.label),
@@ -140,10 +150,11 @@
 
     function renderBody(project) {
         const body = document.getElementById("cs-body");
-        SECTIONS.forEach((section) => {
-            const blocks = project.caseStudy && project.caseStudy[section.key];
+        const order = (project.caseStudy && project.caseStudy.order) || DEFAULT_ORDER;
+        order.forEach((key) => {
+            const blocks = project.caseStudy && project.caseStudy[key];
             if (!blocks || !blocks.length) return;
-            body.appendChild(createElement("h2", null, section.heading));
+            body.appendChild(createElement("h2", null, SECTION_HEADINGS[key]));
             renderBlocks(body, blocks);
         });
     }
@@ -158,14 +169,19 @@
             extra.append(label, tags);
         }
 
-        if (project.repo) {
-            const link = createElement("a", "source-link", "View source on GitHub ");
-            link.href = project.repo;
+        const links = createElement("div", "extra-links");
+        const addLink = (label, href) => {
+            const link = createElement("a", "source-link", label + " ");
+            link.href = href;
             link.target = "_blank";
             link.rel = "noopener";
             link.appendChild(createElement("span", "arrow", "↗"));
-            extra.appendChild(link);
-        }
+            links.appendChild(link);
+        };
+
+        if (project.repo) addLink("View source on GitHub", project.repo);
+        (project.links || []).forEach((item) => addLink(item.label, item.url));
+        if (links.children.length) extra.appendChild(links);
     }
 
     function render() {
