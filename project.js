@@ -10,7 +10,7 @@
     const SECTION_HEADINGS = {
         approach: "Technical Approach & Design Choices",
         context: "Context & the Why",
-        validation: "How We Validated It",
+        validation: "Validating via A/B testing",
         reflections: "Personal Reflections & Engineering Gaps",
     };
 
@@ -93,6 +93,14 @@
                 parent.appendChild(createElement("p", null, block));
             } else if (block && block.heading) {
                 parent.appendChild(createElement("h3", null, block.heading));
+            } else if (block && block.link) {
+                const paragraph = createElement("p", null, block.link.prefix || "");
+                const anchor = createElement("a", "inline-link", block.link.label);
+                anchor.href = block.link.url;
+                anchor.target = "_blank";
+                anchor.rel = "noopener";
+                paragraph.appendChild(anchor);
+                parent.appendChild(paragraph);
             } else if (block && Array.isArray(block.list)) {
                 const list = createElement("ul");
                 block.list.forEach((item) => list.appendChild(createElement("li", null, item)));

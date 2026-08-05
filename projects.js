@@ -71,8 +71,8 @@ const PROJECTS = [
     {
         id: "intersection",
         title: "Intersection Risk Model",
-        domain: "Road Safety Analytics",
-        teaser: "A Vision Zero risk model that ranks Capitol Hill's 346 arterial intersections and recommends evidence based safety treatments.",
+        domain: "A/B Testing & Statistical Modeling",
+        teaser: "A risk model that ranks Capitol Hill's 346 intersections and recommends evidence based safety treatments.",
         image: "images/projects/intersection-map.png",
         url: "intersection.html",
         status: "complete",
@@ -91,21 +91,32 @@ const PROJECTS = [
         caseStudy: {
             order: ["context", "approach", "validation"],
             context: [
-                "The north star metric is expected cyclist KSI, killed or seriously injured, per intersection per year, reported with a 90% credible interval. Seattle has committed to Vision Zero, eliminating traffic deaths and serious injuries, but safety budgets are finite, so the practical question is which intersections to fix first.",
-                "Across 346 arterial intersections in Capitol Hill between 2018 and 2023, the record holds 1,720 reported crashes and 16 cyclists killed or seriously injured. Sixteen events across 346 sites is a very thin signal, and that scarcity is the central modelling problem this project exists to handle. Everything downstream is about ranking well under that constraint.",
+                "The North Star metric: expected cyclist KSI, killed or seriously injured, per intersection per year.",
+                "Seattle has committed to Vision Zero, eliminating traffic deaths and serious injuries, but safety budgets are finite, so the practical question is which intersections to fix first.",
+                {
+                    link: {
+                        prefix: "Link to learn more: ",
+                        label: "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero",
+                        url: "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero",
+                    },
+                },
+                "Across 346 intersections in Capitol Hill the data has 1,720 reported crashes and 16 cyclists killed or seriously injured. Sixteen events across 346 sites is a thin signal.",
+                "Data scarcity is the largest modelling problem in this project.",
+                "A lot of the design decisions are made to fit under this constraint to be able to accurately predict KSI.",
             ],
             approach: [
-                "At the core is a negative binomial (NB2) regression with a log link, following the AASHTO Highway Safety Manual. Three models run rather than one, each targeting a different crash type: bike (169 events), pedestrian (266 events), and vehicle only (1,295 events).",
+                "We use a negative binomial regression model with a log link. Three models run rather than one, each targeting a different crash type: bike (169 events), pedestrian (266 events), and vehicle only (1,295 events).",
                 "All three share the same predictor block so their coefficients line up side by side: signalization, number of approaches as a top coded category rather than a continuous count, posted speed, bike facility presence, and arterial class. Each carries an exposure offset of log(years observed). Only the volume term differs. The pedestrian and vehicle models use log(AADT); the bike model swaps in a bike network centrality score.",
-                "Using log(AADT) rather than raw traffic volume matters. Raw volume implies expected crashes grow exponentially with traffic; the log term instead recovers the empirically observed sub linear “safety in numbers” effect. At the fitted exponent β ≈ 0.226, doubling traffic raises expected crashes by about 17%, not 100%.",
+                "Using log(AADT) rather than raw traffic volume mattered a lot as the raw volume implies expected crashes grow exponentially with traffic; the log term instead recovers the empirically observed sub linear “safety in numbers” effect (describes the phenomenon where an individual in a large group or mass has a lower relative risk).",
+                "At the fitted exponent β ≈ 0.226, doubling traffic raises expected crashes by about 17%.",
                 {
                     list: [
-                        "Empirical Bayes shrinkage (HSM Part C) pulls extreme predictions back toward observed counts, so a site that was simply lucky or unlucky over six years is not over ranked.",
+                        "Empirical Bayes shrinkage pulls our extreme predictions back toward observed counts.",
                         "Cyclist KSI comes from the bike crash model. Its prediction is multiplied by the citywide share of bike crashes that were KSI (16 of 169, or 9.5%) to form a prior, and a Poisson Gamma empirical Bayes step then returns a posterior mean and a 90% credible interval. KSI is not modelled directly because 16 events against 11 predictors will not support a stable fit. This severity share step is the standard workaround, and it is the largest single source of modelling risk in the project.",
-                        "Treatment recommendations multiply each site's expected bike KSI rate by (1 − CMF), using Crash Modification Factors curated from the FHWA Clearinghouse and filtered to approved, intersection related, non rural studies. The library holds 11 treatments: 8 bike, 1 pedestrian, 2 vehicle.",
+                        "Our recommendations multiply each site's expected bike KSI rate by (1 − CMF), using Crash Modification Factors curated from the FHWA Clearinghouse and filtered to approved, intersection related, non rural studies. This holds 11 treatments: 8 bike, 1 pedestrian, 2 vehicle.",
                     ],
                 },
-                "Data is assembled from Seattle GIS intersection geometry and the SDOT collision dataset (crashes snapped within 25 m), with KSI defined by MAXSEVERITYCODE ≥ 3 and keyword matching used to backfill sparse pedestrian and bike fields. In sample, the calibration gap runs to −1.4% for bike, +0.7% for pedestrian, and −0.9% for vehicle, with mean absolute error per intersection of 0.58, 0.70, and 2.76 crashes.",
+                "Data is collected from Seattle GIS intersection geometry and the SDOT collision dataset.",
                 {
                     images: [
                         { src: "images/projects/intersection-map.png", alt: "Risk tiered map of Capitol Hill intersections" },
@@ -126,10 +137,10 @@ const PROJECTS = [
                 },
             ],
             validation: [
-                "Most projects state their modelling choices as if they were obviously correct. An audit of this repo found the opposite: nearly every choice rested on a stated justification with no measured alternative. So seven A/B experiments put those choices on trial, and an independent review checked the results. Some survived. One did not.",
-                { heading: "The experiment that caught a real error" },
-                "The question: should the number of roads meeting at an intersection enter the model as a climbing number, or as separate categories? The climbing number version loses decisively in all three models (likelihood ratio p = 0.0088, 9.0e-08, and 1.5e-07). It predicts that a 6 road intersection is 283% more dangerous than a 4 road one. The data holds three real 6 road intersections, and they are slightly safer, at 0.79 times the risk.",
-                "The genuine pattern is that 3 road intersections are far safer than 4 road ones, roughly one fifth the risk. Forcing a straight line through that drop and extending it is what manufactures the +283%. A misspecified geometry term distorts the ranking, which is the whole product, so this is the change that produced the largest measured accuracy gain.",
+                { heading: "The experiment that caught an error we made" },
+                "The question: should the number of roads meeting at an intersection enter the model as a scaling number or as separate categories?",
+                "The scaling number test loses decisively in all three models (likelihood ratio p = 0.0088, 9.0e-08, and 1.5e-07). It predicts that a 6-road intersection is 283% more dangerous than a 4-road one. The data holds three real 6-road intersections, and they are slightly safer, at 0.79 times the risk.",
+                "The pattern that we found is that 3 road intersections are far safer than 4 road ones, roughly one fifth the risk. This was the change that produced the largest measured accuracy gain.",
                 {
                     plate: true,
                     images: [
@@ -140,9 +151,8 @@ const PROJECTS = [
                     ],
                     caption: "The red line is what a linear per leg term predicts. The blue squares are what the data actually shows. Click to expand.",
                 },
-                { heading: "The experiment that mattered for honesty, not accuracy" },
+                { heading: "A/B test # 2" },
                 "The question: Negative Binomial or Poisson? Negative Binomial wins decisively, but only on uncertainty. Poisson's 90% prediction intervals contain the true value just 77% of the time for vehicle crashes, against 95% for Negative Binomial, and 81 of 346 intersections fall outside an interval meant to catch nearly all of them. For the single predicted number the two are statistically indistinguishable (paired p = 0.48, 0.26, 0.83).",
-                "This tool reports a credible interval next to every estimate, so the choice of model family is what makes that interval honest. That matters more than the point estimate when you are asking a city to commit budget.",
                 {
                     plate: true,
                     images: [
@@ -154,8 +164,8 @@ const PROJECTS = [
                     caption: "A 90% range should contain the real answer about 90% of the time. Poisson's does not. Click to expand.",
                 },
                 { heading: "The experiment that went against the shipped design" },
-                "The question: does fitting three separate models beat one shared model? Out of sample, no. The three model split spends 36 parameters against the shared model's 12, and a formal test found no coefficient behaving differently across crash types (p = 0.643). The rewrite that introduced three models did improve accuracy, but the gain came from fixing the geometry term above, not from the split.",
-                "The honest reason to keep three models is that the product shows bike, pedestrian, and vehicle risk separately and lets you compare them. That is an interpretability argument, not an accuracy one.",
+                "The question: does fitting three separate models beat one shared model? Out of sample, no. The three model split spends 36 parameters against the shared model's 12, and a formal test found no coefficient behaving differently across crash types (p = 0.643). The change that used three models did improve accuracy, but the gain came from fixing the geometry term above and not from the split.",
+                "The reason to keep three models is that the product shows bike, pedestrian, and vehicle risk separately and lets you compare them. That is for interpretability.",
                 {
                     plate: true,
                     images: [
@@ -167,8 +177,7 @@ const PROJECTS = [
                     caption: "Nearly all the improvement came from the geometry fix, not from splitting into three models. Click to expand.",
                 },
                 { heading: "What this data cannot do" },
-                "The bike model's cyclist exposure proxy does not work: neither a bike network centrality score nor traffic volume predicts bike crashes at this sample size. Fixing it takes real cyclist counts, from Strava Metro or permanent counters, not a cleverer proxy.",
-                "More broadly, this dataset can rule out clearly wrong specifications, but it cannot reliably choose between reasonable ones. With 16 serious cyclist injuries across 346 intersections, that is a limit of the data rather than of the method. Better ranking will come from more exposure data, not a fancier model.",
+                "Neither a bike network centrality score nor traffic volume predicts bike crashes at this sample size. The dataset was severely imbalanced. For a future change getting access to cyclist counts from something like the Strava Metro would give us better data to work with.",
             ],
         },
     },

@@ -482,6 +482,16 @@ a {
     opacity: 0.6;
 }
 
+/* Inline prose link; long bare URLs must wrap rather than force a scrollbar. */
+.inline-link {
+    color: var(--ink);
+    border-bottom: 1.5px solid var(--line);
+    overflow-wrap: anywhere;
+}
+.inline-link:hover {
+    border-bottom-color: var(--ink);
+}
+
 /* --- Case-study figures + lightbox -------------------------------------- */
 .case-figure {
     margin: 1.5rem 0 2rem;
