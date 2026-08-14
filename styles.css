@@ -822,6 +822,35 @@ a {
     padding: 0 !important;
     margin-top: 1.25rem;
 }
+
+/* Skills: label sits inline with its tag row to keep the block compact */
+.skills {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 1.25rem;
+    row-gap: 0.7rem;
+    align-items: baseline;
+    width: 100%;
+    max-width: 44rem;
+    margin: 1.5rem auto 0;
+}
+.skills dt {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: right;
+    white-space: nowrap;
+}
+.skills dd {
+    margin: 0;
+}
+.skills .tech-tags {
+    justify-content: flex-start;
+    gap: 0.4rem;
+    margin-top: 0;
+}
 .tech-tags li {
     font-family: var(--font-mono);
     font-size: 0.72rem;
@@ -840,6 +869,19 @@ a {
     }
     .hero-about {
         padding-top: 0;
+    }
+    .skills {
+        grid-template-columns: 1fr;
+        row-gap: 0.35rem;
+    }
+    .skills dt {
+        text-align: center;
+    }
+    .skills dt + dd {
+        margin-bottom: 0.9rem;
+    }
+    .skills .tech-tags {
+        justify-content: center;
     }
     .project-grid {
         grid-template-columns: 1fr;
