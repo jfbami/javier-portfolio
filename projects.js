@@ -63,9 +63,7 @@ const PROJECTS = [
                     ],
                 },
             ],
-            reflections: [
-                "The decisions that mattered most here were about data hygiene rather than architecture. Burst frame leakage and flank asymmetry are exactly the kind of problems that quietly inflate validation metrics and then collapse in deployment, so most of the engineering went into the grouping and augmentation strategy.",
-            ],
+            reflections: [],
         },
     },
     {
@@ -198,9 +196,7 @@ const PROJECTS = [
         ],
         stack: ["Python", "XGBoost", "LightGBM", "LinearSVR", "TimeSeriesSplit"],
         caseStudy: {
-            context: [
-                "The problem is forecasting daily unit sales for thousands of product families across Favorita's grocery stores in Ecuador: predicting the next 16 days for 33 product families and 54 stores, from the Kaggle competition data. Retail demand is noisy and seasonal, and the cost of being wrong is asymmetric: overstock spoils, understock loses sales.",
-            ],
+            context: [],
             approach: [
                 "The plots tell the story of the data and are the foundation for the engineered features.",
                 { heading: "The macro picture: trend, seasonality, growth" },
