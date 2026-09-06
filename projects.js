@@ -53,7 +53,6 @@ const PROJECTS = [
                 },
             ],
             approach: [
-                "The model pairs a ConvNeXt Base backbone with an ArcFace metric learning head, so images of the same individual are pulled together in embedding space and different individuals are pushed apart, the right framing for fine grained, open set identification where unseen animals appear at test time.",
                 {
                     list: [
                         "Leakage control: burst frames are grouped with perceptual hashing (pHash, Hamming distance ≤ 8) and split with StratifiedGroupKFold across 5 folds, so near duplicates stay together while class balance is preserved.",
